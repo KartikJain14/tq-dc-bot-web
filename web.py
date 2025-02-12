@@ -36,12 +36,14 @@ def favicon():
 @app.route("/get", methods=["GET"])
 def submit():
     email = request.args.get("email")
+    team_number = request.args.get("team_number")
     participant = participants_collection.find_one({"email": email})
     
     if not participant:
         return jsonify({"message": "We couldn't find your details, Please contact the organizers."})
+    if participant["team_number"] != team_number:
+        return jsonify({"message": "Invalid team number."})
     else:
-        # Send participant details to the response page
         return render_template("response.html", name=participant["name"], team_number=participant["team_number"], invite_link=participant["invite_link"])
 
 # Run the app on port 3000
